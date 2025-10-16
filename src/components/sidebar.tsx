@@ -20,10 +20,27 @@ const drawerWidth = 240;
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const handleLogout = () => {
-    router.push("/");
+    router.push("/"); // Redirect to login
   };
+
   const [selectedPage, setSelectedPage] = React.useState("Dashboard");
   const [expandedMenu, setExpandedMenu] = React.useState<string | null>(null);
+
+  const subtitles: Record<string, string> = {
+    "Fleet Map": "Real-time monitoring of vehicle locations and routes",
+    Dashboard: "Overview of fleet performance and system status",
+    Finance: "Manage revenue, payroll, and expenses efficiently",
+    Revenue: "Detailed breakdown of earnings and income sources",
+    Boundaries: "Manage regional limits and operational areas",
+    Charging: "Track EV charging sessions and power usage",
+    Payroll: "View and manage driver salary details",
+    Ledger: "Comprehensive record of all transactions",
+    Drivers: "Overview and management of all registered drivers",
+    Vehicles: "Track and maintain vehicle information",
+    Shift: "Manage driver schedules and shifts",
+    "Alert Log": "Review system alerts and notifications",
+    "Charging Module": "Manage charging infrastructure and stations",
+  };
 
   const mainMenu = [
     { text: "Fleet Map", icon: <MapTwoTone /> },
@@ -75,7 +92,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                   className={`flex items-center justify-between w-full px-4 py-3 mb-1 text-left rounded-2xl transition-colors duration-200
               ${
                 isSelected
-                  ? "bg-[#222222] border font-medium border-[#2E2E2E] text-[#D6B600] "
+                  ? "bg-[#222222] border font-medium border-[#2E2E2E] text-[#D6B600]"
                   : "hover:bg-white/10"
               }`}
                 >
@@ -96,7 +113,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                     </span>
                   </div>
                   {hasSubmenu && (
-                    <span className="ml-2 text-white">
+                    <span className="ml-2 text-white text-sm">
                       {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
                     </span>
                   )}
@@ -125,6 +142,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
+
         <hr className="border-[#ffffff2d] mb-4" />
 
         {/* PROFILE BUTTON AT BOTTOM */}
@@ -142,10 +160,8 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                   className="w-8 h-8 object-cover"
                 />
               </span>
-
               <span className="text-white font-medium">Admin User</span>
             </div>
-
             <LogoutRounded className="text-white cursor-pointer hover:text-[#D6B600] transition-colors duration-200" />
           </button>
         </div>
@@ -154,9 +170,17 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Top AppBar */}
-        <header className="fixed top-0 left-60 right-0 h-16 bg-white shadow flex items-center px-6 z-10">
+        <header className="fixed top-0 left-60 right-0 h-20 bg-white shadow flex flex-col justify-center px-6 z-10">
           <h1 className="text-xl text-black font-semibold">{selectedPage}</h1>
+          <p className="text-gray-500 text-sm mt-1">
+            {subtitles[selectedPage] || "Page description goes here."}
+          </p>
         </header>
+
+        {/* Page Content */}
+        {/* <main className="mt-20 p-6 flex-1 bg-gray-100 overflow-auto">
+          {children}
+        </main> */}
       </div>
     </div>
   );
