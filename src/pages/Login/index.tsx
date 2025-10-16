@@ -1,7 +1,9 @@
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function Login() {
+  const router = useRouter();
   return (
     <div
       className="relative min-h-screen h-screen bg-cover bg-center"
@@ -128,6 +130,7 @@ export default function Login() {
             <div className="mt-12">
               <button
                 type="button"
+                onClick={() => router.push("/fleetmap")} // Redirects to FleetMap page
                 className="w-full py-2 px-4 text-[15px] font-medium tracking-wide rounded-xl text-[#FFD900] bg-black hover:bg-[#111111] focus:outline-none cursor-pointer"
               >
                 Sign in
