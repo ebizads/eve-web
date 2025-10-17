@@ -19,6 +19,7 @@ const drawerWidth = 240;
 
 export default function Sidebar({ children }: { children: React.ReactNode }) {
   const router = useRouter();
+
   const handleLogout = () => {
     router.push("/"); // Redirect to login
   };
@@ -26,6 +27,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   const [selectedPage, setSelectedPage] = React.useState("Dashboard");
   const [expandedMenu, setExpandedMenu] = React.useState<string | null>(null);
 
+  // Page subtitles
   const subtitles: Record<string, string> = {
     "Fleet Map": "Real-time monitoring of vehicle locations and routes",
     Dashboard: "Overview of fleet performance and system status",
@@ -43,22 +45,41 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
   };
 
   const mainMenu = [
-    { text: "Fleet Map", icon: <MapTwoTone /> },
-    { text: "Dashboard", icon: <GridViewRounded /> },
+    { text: "Fleet Map", icon: <MapTwoTone />, path: "/fleet-map" },
+    { text: "Dashboard", icon: <GridViewRounded />, path: "/dashboard" },
     {
       text: "Finance",
       icon: <PaymentsRounded />,
-      submenu: ["Revenue", "Boundaries", "Charging", "Payroll", "Ledger"],
+      submenu: [
+        { text: "Revenue", path: "/finance/revenue" },
+        { text: "Boundaries", path: "/finance/boundaries" },
+        { text: "Charging", path: "/finance/charging" },
+        { text: "Payroll", path: "/finance/payroll" },
+        { text: "Ledger", path: "/finance/ledger" },
+      ],
     },
-    { text: "Drivers", icon: <PeopleAltRounded /> },
-    { text: "Vehicles", icon: <DirectionsCarFilledRounded /> },
-    { text: "Shift", icon: <EventRounded /> },
-    { text: "Alert Log", icon: <ReportRounded /> },
-    { text: "Charging Module", icon: <EvStationRounded /> },
+    { text: "Drivers", icon: <PeopleAltRounded />, path: "/drivers" },
+    {
+      text: "Vehicles",
+      icon: <DirectionsCarFilledRounded />,
+      path: "/vehicles",
+    },
+    { text: "Shift", icon: <EventRounded />, path: "/shift" },
+    { text: "Alert Log", icon: <ReportRounded />, path: "/alert-log" },
+    {
+      text: "Charging Module",
+      icon: <EvStationRounded />,
+      path: "/charging-module",
+    },
   ];
 
   const toggleMenu = (menuText: string) => {
     setExpandedMenu(expandedMenu === menuText ? null : menuText);
+  };
+
+  const handleNavigation = (text: string, path?: string) => {
+    setSelectedPage(text);
+    if (path) router.push(path);
   };
 
   return (
@@ -77,7 +98,7 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
 
         {/* MENU ITEMS */}
         <nav className="flex-1">
-          {mainMenu.map(({ text, icon, submenu }) => {
+          {mainMenu.map(({ text, icon, path, submenu }) => {
             const isSelected = selectedPage === text;
             const isExpanded = expandedMenu === text;
             const hasSubmenu = !!submenu;
@@ -86,15 +107,15 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
               <div key={text}>
                 <button
                   onClick={() => {
-                    setSelectedPage(text);
+                    handleNavigation(text, path);
                     if (hasSubmenu) toggleMenu(text);
                   }}
                   className={`flex items-center justify-between w-full px-4 py-3 mb-1 text-left rounded-2xl transition-colors duration-200
-              ${
-                isSelected
-                  ? "bg-[#222222] border font-medium border-[#2E2E2E] text-[#D6B600]"
-                  : "hover:bg-white/10"
-              }`}
+                    ${
+                      isSelected
+                        ? "bg-[#222222] border font-medium border-[#2E2E2E] text-[#D6B600]"
+                        : "hover:bg-white/10"
+                    }`}
                 >
                   <div className="flex items-center">
                     <span
@@ -122,16 +143,16 @@ export default function Sidebar({ children }: { children: React.ReactNode }) {
                 {/* Submenu */}
                 {hasSubmenu && isExpanded && (
                   <div className="ml-8 flex flex-col border-l border-[#2E2E2E] pl-4">
-                    {submenu!.map((subText) => (
+                    {submenu!.map(({ text: subText, path: subPath }) => (
                       <button
                         key={subText}
-                        onClick={() => setSelectedPage(subText)}
+                        onClick={() => handleNavigation(subText, subPath)}
                         className={`flex items-center text-sm px-3 py-2 mb-1 rounded-lg text-left transition-colors duration-200
-                    ${
-                      selectedPage === subText
-                        ? "bg-[#222222] text-[#D6B600] font-medium"
-                        : "hover:bg-white/10 text-white font-normal"
-                    }`}
+                          ${
+                            selectedPage === subText
+                              ? "bg-[#222222] text-[#D6B600] font-medium"
+                              : "hover:bg-white/10 text-white font-normal"
+                          }`}
                       >
                         {subText}
                       </button>
