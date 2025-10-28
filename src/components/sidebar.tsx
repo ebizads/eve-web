@@ -15,8 +15,6 @@ import {
   LogoutRounded,
 } from "@mui/icons-material";
 
-const drawerWidth = 240;
-
 export default function Sidebar() {
   const router = useRouter();
 
@@ -24,10 +22,8 @@ export default function Sidebar() {
     router.push("/"); // Redirect to login
   };
 
-  const [selectedPage, setSelectedPage] = React.useState("Dashboard");
   const [expandedMenu, setExpandedMenu] = React.useState<string | null>(null);
 
-  // Page subtitles
   const subtitles: Record<string, string> = {
     "Fleet Map": "Real-time monitoring of vehicle locations and routes",
     Dashboard: "Overview of fleet performance and system status",
@@ -59,32 +55,34 @@ export default function Sidebar() {
       ],
     },
     { text: "Drivers", icon: <PeopleAltRounded />, path: "/drivers" },
-    {
-      text: "Vehicles",
-      icon: <DirectionsCarFilledRounded />,
-      path: "/vehicles",
-    },
+    { text: "Vehicles", icon: <DirectionsCarFilledRounded />, path: "/vehicles" },
     { text: "Shift", icon: <EventRounded />, path: "/shift" },
     { text: "Alert Log", icon: <ReportRounded />, path: "/alert-log" },
-    {
-      text: "Charging Module",
-      icon: <EvStationRounded />,
-      path: "/charging-module",
-    },
+    { text: "Charging Module", icon: <EvStationRounded />, path: "/charging-module" },
   ];
 
   const toggleMenu = (menuText: string) => {
     setExpandedMenu(expandedMenu === menuText ? null : menuText);
   };
 
-  const handleNavigation = (text: string, path?: string) => {
-    setSelectedPage(text);
+  // ✅ Determine active page from current route
+  const currentPath = router.asPath;
+
+  const isActive = (path?: string) => {
+    if (!path) return false;
+    // Match both exact and nested routes
+    return currentPath === path || currentPath.startsWith(`${path}/`);
+  };
+
+  const handleNavigation = (path?: string, hasSubmenu?: boolean, text?: string) => {
+    if (hasSubmenu) {
+      toggleMenu(text!);
+    }
     if (path) router.push(path);
   };
 
   return (
-    // {/* Sidebar */}
-    <div className="flex flex-col w-full h-full px-3.5 bg-[#121212] font-light text-white/40 shadow-lg ">
+    <div className="flex flex-col w-full h-full px-3.5 bg-[#121212] font-light text-white/40 shadow-lg">
       {/* LOGO */}
       <div className="flex justify-center items-center mt-7 mb-6 cursor-pointer">
         <Image src="/eve-icon.svg" alt="Logo" width={150} height={150} />
@@ -95,20 +93,18 @@ export default function Sidebar() {
       {/* MENU ITEMS */}
       <nav className="flex-1">
         {mainMenu.map(({ text, icon, path, submenu }) => {
-          const isSelected = selectedPage === text;
+          const activeMain =
+            isActive(path) ||
+            (submenu && submenu.some((item) => isActive(item.path)));
           const isExpanded = expandedMenu === text;
-          const hasSubmenu = !!submenu;
 
           return (
             <div key={text}>
               <button
-                onClick={() => {
-                  handleNavigation(text, path);
-                  if (hasSubmenu) toggleMenu(text);
-                }}
+                onClick={() => handleNavigation(path, !!submenu, text)}
                 className={`flex items-center justify-between w-full px-4 py-3 mb-1 text-left rounded-2xl transition-colors duration-200
                     ${
-                      isSelected
+                      activeMain
                         ? "bg-[#222222] border font-medium border-[#2E2E2E] text-[#D6B600]"
                         : "hover:bg-white/10"
                     }`}
@@ -116,43 +112,45 @@ export default function Sidebar() {
                 <div className="flex items-center">
                   <span
                     className={`mr-3 ${
-                      isSelected ? "text-[#D6B600]" : "text-white"
+                      activeMain ? "text-[#D6B600]" : "text-white"
                     }`}
                   >
                     {icon}
                   </span>
                   <span
                     className={`${
-                      isSelected ? "text-[#D6B600]" : "text-white"
+                      activeMain ? "text-[#D6B600]" : "text-white"
                     }`}
                   >
                     {text}
                   </span>
                 </div>
-                {hasSubmenu && (
+                {submenu && (
                   <span className="ml-2 text-white text-sm">
                     {isExpanded ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
                   </span>
                 )}
               </button>
 
-              {/* Submenu */}
-              {hasSubmenu && isExpanded && (
+              {submenu && isExpanded && (
                 <div className="ml-8 flex flex-col border-l border-[#2E2E2E] pl-4">
-                  {submenu!.map(({ text: subText, path: subPath }) => (
-                    <button
-                      key={subText}
-                      onClick={() => handleNavigation(subText, subPath)}
-                      className={`flex items-center text-sm px-3 py-2 mb-1 rounded-lg text-left transition-colors duration-200
+                  {submenu.map(({ text: subText, path: subPath }) => {
+                    const activeSub = isActive(subPath);
+                    return (
+                      <button
+                        key={subText}
+                        onClick={() => handleNavigation(subPath)}
+                        className={`flex items-center text-sm px-3 py-2 mb-1 rounded-lg text-left transition-colors duration-200
                           ${
-                            selectedPage === subText
+                            activeSub
                               ? "bg-[#222222] text-[#D6B600] font-medium"
                               : "hover:bg-white/10 text-white font-normal"
                           }`}
-                    >
-                      {subText}
-                    </button>
-                  ))}
+                      >
+                        {subText}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </div>
@@ -162,7 +160,7 @@ export default function Sidebar() {
 
       <hr className="border-[#ffffff2d] mb-4" />
 
-      {/* PROFILE BUTTON AT BOTTOM */}
+      {/* PROFILE BUTTON */}
       <div className="mt-auto mb-4">
         <button
           className="flex items-center justify-between w-full px-4 py-3 text-left rounded-2xl bg-[#FFFFFF]/4 border border-[#ffffff]/4 shadow-inner"
@@ -183,17 +181,5 @@ export default function Sidebar() {
         </button>
       </div>
     </div>
-
-    // {/* Main Content Area */}
-
-    //   <div className="flex-1 flex flex-col">
-    //   {/* Top AppBar */}
-    //   <header className="fixed top-0 left-60 right-0 h-20 bg-white shadow flex flex-col justify-center px-6 z-10">
-    //     <h1 className="text-xl text-black font-semibold">{selectedPage}</h1>
-    //     <p className="text-gray-500 text-sm mt-1">
-    //       {subtitles[selectedPage] || "Page description goes here."}
-    //     </p>
-    //   </header>
-    // </div>
   );
 }
