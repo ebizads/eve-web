@@ -6,15 +6,12 @@ export default function Header() {
   const path = router.asPath;
 
   // 🔹 Map routes to titles and subtitles
-  const pageInfo: Record<
-    string,
-    { title: string; subtitle: string }
-  > = {
+  const pageInfo: Record<string, { title: string; subtitle: string }> = {
     "/Dashboard": {
       title: "Dashboard",
       subtitle: "Overview of fleet performance and system status",
     },
-    "/fleet-map": {
+    "/Fleetmap": {
       title: "Fleet Map",
       subtitle: "Real-time monitoring of vehicle locations and routes",
     },
@@ -61,10 +58,13 @@ export default function Header() {
   };
 
   // 🔹 Match route
-  const current = pageInfo[path] || { title: "Dashboard", subtitle: "Welcome back" };
+  const current = pageInfo[path] || {
+    title: "Dashboard",
+    subtitle: "Welcome back",
+  };
 
   return (
-    <header className="sticky top-0 h-16 bg-white shadow flex flex-col justify-center px-6 z-10">
+    <header className="sticky top-0 h-16 bg-white shadow flex flex-col justify-center p-10 z-10">
       <h1 className="text-xl text-black font-semibold">{current.title}</h1>
       <p className="text-gray-500 text-sm">{current.subtitle}</p>
     </header>

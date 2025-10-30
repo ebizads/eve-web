@@ -24,24 +24,24 @@ export default function Sidebar() {
 
   const [expandedMenu, setExpandedMenu] = React.useState<string | null>(null);
 
-  const subtitles: Record<string, string> = {
-    "Fleet Map": "Real-time monitoring of vehicle locations and routes",
-    Dashboard: "Overview of fleet performance and system status",
-    Finance: "Manage revenue, payroll, and expenses efficiently",
-    Revenue: "Detailed breakdown of earnings and income sources",
-    Boundaries: "Manage regional limits and operational areas",
-    Charging: "Track EV charging sessions and power usage",
-    Payroll: "View and manage driver salary details",
-    Ledger: "Comprehensive record of all transactions",
-    Drivers: "Overview and management of all registered drivers",
-    Vehicles: "Track and maintain vehicle information",
-    Shift: "Manage driver schedules and shifts",
-    "Alert Log": "Review system alerts and notifications",
-    "Charging Module": "Manage charging infrastructure and stations",
-  };
+  // const subtitles: Record<string, string> = {
+  //   "Fleet Map": "Real-time monitoring of vehicle locations and routes",
+  //   Dashboard: "Overview of fleet performance and system status",
+  //   Finance: "Manage revenue, payroll, and expenses efficiently",
+  //   Revenue: "Detailed breakdown of earnings and income sources",
+  //   Boundaries: "Manage regional limits and operational areas",
+  //   Charging: "Track EV charging sessions and power usage",
+  //   Payroll: "View and manage driver salary details",
+  //   Ledger: "Comprehensive record of all transactions",
+  //   Drivers: "Overview and management of all registered drivers",
+  //   Vehicles: "Track and maintain vehicle information",
+  //   Shift: "Manage driver schedules and shifts",
+  //   "Alert Log": "Review system alerts and notifications",
+  //   "Charging Module": "Manage charging infrastructure and stations",
+  // };
 
   const mainMenu = [
-    { text: "Fleet Map", icon: <MapTwoTone />, path: "/fleet-map" },
+    { text: "Fleet Map", icon: <MapTwoTone />, path: "/Fleetmap" },
     { text: "Dashboard", icon: <GridViewRounded />, path: "/Dashboard" },
     {
       text: "Finance",
@@ -55,10 +55,18 @@ export default function Sidebar() {
       ],
     },
     { text: "Drivers", icon: <PeopleAltRounded />, path: "/drivers" },
-    { text: "Vehicles", icon: <DirectionsCarFilledRounded />, path: "/vehicles" },
+    {
+      text: "Vehicles",
+      icon: <DirectionsCarFilledRounded />,
+      path: "/vehicles",
+    },
     { text: "Shift", icon: <EventRounded />, path: "/shift" },
     { text: "Alert Log", icon: <ReportRounded />, path: "/alert-log" },
-    { text: "Charging Module", icon: <EvStationRounded />, path: "/charging-module" },
+    {
+      text: "Charging Module",
+      icon: <EvStationRounded />,
+      path: "/charging-module",
+    },
   ];
 
   const toggleMenu = (menuText: string) => {
@@ -74,7 +82,11 @@ export default function Sidebar() {
     return currentPath === path || currentPath.startsWith(`${path}/`);
   };
 
-  const handleNavigation = (path?: string, hasSubmenu?: boolean, text?: string) => {
+  const handleNavigation = (
+    path?: string,
+    hasSubmenu?: boolean,
+    text?: string
+  ) => {
     if (hasSubmenu) {
       toggleMenu(text!);
     }

@@ -2,8 +2,7 @@ import React from "react";
 import Sidebar from "./sidebar";
 import Header from "./header";
 
-export default function Layout({ children }: { children: React.ReactNode }) 
- {
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex w-screen h-screen overflow-hidden">
       {/* SIDEBAR */}
@@ -11,9 +10,9 @@ export default function Layout({ children }: { children: React.ReactNode })
         <Sidebar />
       </aside>
 
-      <div className="flex flex-col flex-1 overflow-y-auto bg-gray-100">
+      <div className="flex flex-col h-full flex-1 overflow-hidden bg-gray-100">
         <Header />
-        <main className="flex-1 pt-12 px-6">{children}</main>
+        <div className="flex-1 overflow-hidden">{children}</div>
       </div>
     </div>
   );
