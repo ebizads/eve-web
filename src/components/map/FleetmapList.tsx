@@ -1,7 +1,9 @@
+"use client";
+
+import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import VehicleList from "@/components/map/VehicleList";
-import { useState } from "react";
 
 export default function FleetmapList() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -13,57 +15,83 @@ export default function FleetmapList() {
 
   const handleFilterClick = () => {
     console.log("Filter clicked!");
-    // Later: open filter modal or dropdown here
   };
 
   const vehicles = [
-    { name: "Vehicle 1", status: "Available" },
-    { name: "Vehicle 2", status: "Idle" },
-    { name: "Vehicle 3", status: "On Trip" },
-    { name: "Vehicle 4", status: "Available" },
-    { name: "Vehicle 5", status: "Idle" },
+    {
+      name: "ABC-123",
+      driver: "John Doe",
+      status: "Available" as const,
+      speed: 45,
+      battery: 80,
+    },
+    {
+      name: "XYZ-789",
+      driver: "Jane Smith",
+      status: "Idle" as const,
+      speed: 0,
+      battery: 55,
+    },
+    {
+      name: "LMN-456",
+      driver: "Carlos Reyes",
+      status: "On Trip" as const,
+      speed: 62,
+      battery: 30,
+    },
   ];
+
   return (
-    <main className="w-[350px] h-[100vh] bg-white shadow-md p-4 overflow-y-auto">
-      {/* Right side — Container */}
-      <form onSubmit={handleSearch} className="mb-4 flex items-center gap-2">
+    <div
+      className="w-[370px] h-screen flex flex-col 
+                 bg-white/70 backdrop-blur-md border-l border-gray-200 
+                 shadow-xl p-5"
+    >
+      {/* 🔍 Search and Filter */}
+      <form
+        onSubmit={handleSearch}
+        className="mb-4 flex items-center gap-2 bg-white/80 border border-gray-200 
+                   rounded-xl px-3 py-2 shadow-sm hover:shadow-md transition-all duration-200"
+      >
         <div className="relative flex-1">
           <SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" />
           <input
             type="text"
-            placeholder="Search"
+            placeholder="Search vehicle..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-3 text-sm text-black border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 h-10"
+            className="w-full pl-10 pr-3 text-sm text-gray-800 bg-transparent 
+                       placeholder:text-gray-400 focus:outline-none focus:ring-0"
           />
         </div>
 
         <button
           type="button"
           onClick={handleFilterClick}
-          className="flex items-center gap-1.5 px-3 border border-gray-300 rounded-lg text-sm text-black hover:bg-gray-100 transition h-10"
+          className="flex items-center gap-1.5 px-3 py-1.5 border border-gray-200 
+                     rounded-lg text-sm text-gray-700 bg-white/80 hover:bg-gray-100 
+                     hover:shadow-sm transition-all duration-200"
         >
-          <FilterListIcon className="text-gray-600" />
-          Filters
+          <FilterListIcon sx={{ fontSize: 18 }} className="text-gray-600" />
+          <span className="font-medium">Filter</span>
         </button>
       </form>
 
-      <div className="border border-[#9D9D9D] rounded-lg p-4 w-full">
-        <p className="text-sm font-semibold text-[#1F2937] mb-3">
-          Ride Status Legend
+      {/* 🟢 Ride Status Legend */}
+      <div className="rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-sm p-4 mb-4 shadow-sm">
+        <p className="text-sm font-semibold text-gray-800 mb-3 flex items-center justify-between">
+          Ride Status
+          <span className="text-xs text-gray-400 font-medium">Overview</span>
         </p>
 
-        {/* Status List */}
-        <div className="space-y-2">
+        <div className="space-y-2.5">
           {/* Available */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              {/* Colored dot */}
               <span className="w-3 h-3 rounded-full bg-green-500"></span>
-              <span className="text-sm text-[#1F2937]">Available</span>
+              <span className="text-sm text-gray-700">Available</span>
             </div>
-            {/* Number badge */}
-            <span className="text-xs font-semibold px-2 py-1 rounded bg-green-100 text-green-800">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-lg bg-green-100 text-green-700">
               12
             </span>
           </div>
@@ -72,9 +100,9 @@ export default function FleetmapList() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-yellow-500"></span>
-              <span className="text-sm text-[#1F2937]">Idle</span>
+              <span className="text-sm text-gray-700">Idle</span>
             </div>
-            <span className="text-xs font-semibold px-2 py-1 rounded bg-yellow-100 text-yellow-800">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-lg bg-yellow-100 text-yellow-700">
               5
             </span>
           </div>
@@ -83,14 +111,19 @@ export default function FleetmapList() {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="w-3 h-3 rounded-full bg-red-500"></span>
-              <span className="text-sm text-[#1F2937]">On Trip</span>
+              <span className="text-sm text-gray-700">On Trip</span>
             </div>
-            <span className="text-xs font-semibold px-2 py-1 rounded bg-red-100 text-red-800">
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-lg bg-red-100 text-red-700">
               8
             </span>
           </div>
         </div>
       </div>
-    </main>
+
+      {/* 🚘 Vehicle List */}
+      <div className="flex-1 overflow-hidden">
+        <VehicleList vehicles={vehicles} />
+      </div>
+    </div>
   );
 }
