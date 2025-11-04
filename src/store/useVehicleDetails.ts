@@ -3,9 +3,15 @@ import { create } from "zustand";
 export interface Vehicle {
   name: string;
   driver: string;
+  plateNo: string;
+  driverContact: string;
+  passengerName: string;
+  pickupLocation: string;
+  dropoffLocation: string;
   status: "Available" | "Idle" | "On Trip";
   speed: number;
   battery: number;
+  rating: number;
 }
 
 interface VehicleStore {

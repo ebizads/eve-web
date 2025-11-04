@@ -1,12 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import VehicleList from "@/components/map/VehicleList";
+import { useVehicleStore } from "@/store/useVehicleDetails"; // <-- import store
 
 export default function FleetmapList() {
   const [searchTerm, setSearchTerm] = useState("");
+  const setSelectedVehicle = useVehicleStore(
+    (state) => state.setSelectedVehicle
+  );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,23 +25,41 @@ export default function FleetmapList() {
     {
       name: "ABC-123",
       driver: "John Doe",
+      plateNo: "ABC 1234",
+      driverContact: "09171234567",
+      passengerName: "Jane Smith",
+      pickupLocation: "SM Mall, Cebu",
+      dropoffLocation: "IT Park, Lahug",
       status: "Available" as const,
       speed: 45,
       battery: 80,
+      rating: 2.9,
     },
     {
       name: "XYZ-789",
       driver: "Jane Smith",
+      plateNo: "XYZ 7890",
+      driverContact: "09179876543",
+      passengerName: "Carlos Reyes",
+      pickupLocation: "Ayala Center, Cebu",
+      dropoffLocation: "Banilad, Cebu",
       status: "Idle" as const,
       speed: 0,
       battery: 55,
+      rating: 4.9,
     },
     {
       name: "LMN-456",
       driver: "Carlos Reyes",
+      plateNo: "LMN 4567",
+      driverContact: "09171239876",
+      passengerName: "John Doe",
+      pickupLocation: "Colon St, Cebu",
+      dropoffLocation: "Talamban, Cebu",
       status: "On Trip" as const,
       speed: 62,
       battery: 30,
+      rating: 4.9,
     },
   ];
 

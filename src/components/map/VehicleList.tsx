@@ -4,15 +4,7 @@ import Image from "next/image";
 import BatteryFullIcon from "@mui/icons-material/BatteryFull";
 import PersonIcon from "@mui/icons-material/Person";
 import SpeedIcon from "@mui/icons-material/Speed";
-import { useVehicleStore } from "@/store/useVehicleDetails";
-
-interface Vehicle {
-  name: string;
-  driver: string;
-  status: "Available" | "Idle" | "On Trip";
-  speed: number;
-  battery: number;
-}
+import { useVehicleStore, type Vehicle } from "@/store/useVehicleDetails";
 
 interface VehicleListProps {
   vehicles: Vehicle[];
