@@ -1,36 +1,26 @@
-"use client";
-
 import Head from "next/head";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { useState } from "react";
 
 export default function Login() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setIsLoading(true);
 
-    if (!email || !password) {
-      setError("Please enter your email and password.");
-      setIsLoading(false);
-      return;
-    }
+    // Mock credentials (replace with your API login later)
+    const validEmail = "admin@example.com";
+    const validPassword = "12345";
 
-    // Simulated API delay
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-
-    // Replace this with real API logic later
-    if (email === "admin@example.com" && password === "password123") {
-      alert("Login successful!");
-      setIsLoading(false);
+    if (email === validEmail && password === validPassword) {
+      setError("");
+      router.push("/Fleetmap");
     } else {
       setError("Invalid email or password. Please try again.");
-      setIsLoading(false);
     }
   };
 
@@ -51,10 +41,9 @@ export default function Login() {
 
       {/* Card positioning */}
       <main
-        className="relative z-10 flex h-full 
-          items-center 
-          lg:justify-start lg:pl-44 
-          justify-center px-6"
+        className="relative z-10 flex h-full items-center 
+                   lg:justify-start lg:pl-44 
+                   justify-center px-6"
       >
         <div
           className="relative bg-white/20 backdrop-blur-lg rounded-3xl 
@@ -89,10 +78,10 @@ export default function Login() {
               <input
                 name="email"
                 type="text"
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full text-sm border border-slate-950 px-4 py-3 pr-8 rounded-xl"
+                className="w-full text-sm border border-slate-950 px-4 py-3 rounded-xl"
               />
             </div>
 
@@ -101,18 +90,18 @@ export default function Login() {
               <input
                 name="password"
                 type="password"
+                required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                required
-                className="w-full text-sm border border-slate-950 px-4 py-3 pr-8 rounded-xl"
+                className="w-full text-sm border border-slate-950 px-4 py-3 rounded-xl"
               />
             </div>
 
-            {/* 🔹 Error Message */}
+            {/* Error Message */}
             {error && (
-              <div className="text-red-600 text-sm font-medium bg-red-50 border border-red-200 rounded-lg p-2 text-center">
+              <p className="text-red-600 text-sm font-medium text-center">
                 {error}
-              </div>
+              </p>
             )}
 
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -132,7 +121,7 @@ export default function Login() {
               </div>
 
               <div className="text-sm">
-                <a className="text-black hover:underline font-semibold cursor-pointer">
+                <a className="text-black hover:underline font-semibold">
                   Forgot your password?
                 </a>
               </div>
@@ -141,14 +130,9 @@ export default function Login() {
             <div className="mt-12">
               <button
                 type="submit"
-                disabled={isLoading}
-                className={`w-full py-2 px-4 text-[15px] font-medium tracking-wide rounded-xl 
-                  text-[#FFD900] bg-black hover:bg-[#111111] focus:outline-none 
-                  cursor-pointer transition-all duration-300 ${
-                    isLoading ? "opacity-70 cursor-not-allowed" : ""
-                  }`}
+                className="w-full py-2 px-4 text-[15px] font-medium tracking-wide rounded-xl text-[#FFD900] bg-black hover:bg-[#111111] focus:outline-none cursor-pointer"
               >
-                {isLoading ? "Signing in..." : "Sign in"}
+                Sign in
               </button>
             </div>
           </form>
