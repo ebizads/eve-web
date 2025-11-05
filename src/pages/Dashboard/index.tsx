@@ -60,42 +60,43 @@ const centerTextPlugin = {
   },
 };
 
-const alignedShadowPlugin = {
-  id: "alignedShadow",
-  beforeDatasetsDraw(chart: any) {
-    const { ctx, data } = chart;
+const perfectlyAlignedShadowPlugin = {
+  id: "perfectlyAlignedShadow",
+  afterDatasetsDraw(chart: any) {
+    const { ctx, chartArea } = chart;
+
+    if (
+      !chartArea ||
+      chartArea.top === undefined ||
+      chartArea.bottom === undefined
+    )
+      return;
+
+    const { top, bottom } = chartArea;
 
     ctx.save();
 
-    data.datasets.forEach((dataset: any, datasetIndex: number) => {
+    // Draw shadows using the exact bar positions that have already been calculated
+    chart.data.datasets.forEach((dataset: any, datasetIndex: number) => {
       const meta = chart.getDatasetMeta(datasetIndex);
+      if (!meta.data || meta.data.length === 0) return;
 
       const shadowColor =
         datasetIndex === 0
-          ? "rgba(252, 211, 77, 0.3)" // yellow for Completed
-          : "rgba(239, 68, 68, 0.3)"; // Red for Cancelled
+          ? "rgba(252, 211, 77, 0.15)" // yellow for Completed
+          : "rgba(31, 41, 68, 0.15)"; // gray for Cancelled
 
       meta.data.forEach((bar: any) => {
-        const { x: barX, y: barY, width: barWidth, height: barHeight } = bar;
+        const { x, width } = bar;
 
-        if (barHeight > 0) {
-          const shadowHeight = barHeight * 1.3; // 30% taller than actual bar
-          const shadowY = barY - (shadowHeight - barHeight); // Align bottom with bar bottom
-
-          const shadowGradient = ctx.createLinearGradient(
-            barX - barWidth / 2,
-            shadowY,
-            barX - barWidth / 2,
-            shadowY + shadowHeight
-          );
-          shadowGradient.addColorStop(0, shadowColor);
-          shadowGradient.addColorStop(0.7, shadowColor);
-          shadowGradient.addColorStop(1, "rgba(0, 0, 0, 0)");
-
-          ctx.fillStyle = shadowGradient;
-
-          ctx.fillRect(barX - barWidth / 2, shadowY, barWidth, shadowHeight);
-        }
+        // Use the exact bar position and extend to full height
+        ctx.fillStyle = shadowColor;
+        ctx.fillRect(
+          x - width / 2, // Exact bar X position (center minus half width)
+          top, // Chart top
+          width, // Exact bar width
+          bottom - top // Full chart height
+        );
       });
     });
 
@@ -212,7 +213,7 @@ export default function Dashboard() {
         label: "Completed",
         data: [18, 22, 25, 20, 28, 32, 24],
         backgroundColor: "#FCD34D",
-        borderColor: "#10b981",
+        borderColor: "#FCD34D",
         borderWidth: 0,
         borderRadius: 4,
         barPercentage: 0.7,
@@ -221,8 +222,8 @@ export default function Dashboard() {
       {
         label: "Cancelled",
         data: [3, 2, 4, 5, 2, 1, 3],
-        backgroundColor: "#ef4444",
-        borderColor: "#ef4444",
+        backgroundColor: "#1F2937",
+        borderColor: "#1F2937",
         borderWidth: 0,
         borderRadius: 4,
         barPercentage: 0.7,
@@ -531,7 +532,7 @@ export default function Dashboard() {
             <Bar
               data={bookingData}
               options={barOptions}
-              plugins={[alignedShadowPlugin]}
+              plugins={[perfectlyAlignedShadowPlugin]}
             />
           </div>
         </div>
