@@ -1,21 +1,18 @@
+import React from "react";
 import Sidebar from "./sidebar";
-import { useRouter } from "next/router";
-import { ReactNode } from "react";
+import Header from "./header";
 
-interface LayoutProps {
-  children: ReactNode;
-}
-
-export default function Layout({ children }: LayoutProps) {
-  const router = useRouter();
-
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-col w-full h-auto min-h-screen">
-      <div className="top-0 sticky z-50">
+    <div className="flex w-screen h-screen overflow-hidden">
+      {/* SIDEBAR */}
+      <aside className="w-60 h-full sticky top-0">
         <Sidebar />
-      </div>
-      <div className="flex flex-1 w-full h-fit justify-center bg-[#E9EBEF]">
-        {children}
+      </aside>
+
+      <div className="flex flex-col h-full flex-1 overflow-hidden bg-gray-100">
+        <Header />
+        <div className="flex-1 overflow-hidden">{children}</div>
       </div>
     </div>
   );
