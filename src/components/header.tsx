@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { Campaign } from "@mui/icons-material";
 
 export default function Header() {
   const router = useRouter();
@@ -14,6 +15,10 @@ export default function Header() {
     "/Fleetmap": {
       title: "Fleet Map",
       subtitle: "Real-time monitoring of vehicle locations and routes",
+    },
+    "/Announcement": {
+      title: "Announcements",
+      subtitle: "View and manage all system announcements and promotions",
     },
     "/finance/revenue": {
       title: "Revenue",
@@ -64,9 +69,20 @@ export default function Header() {
   };
 
   return (
-    <header className="sticky top-0 h-16 bg-white shadow flex flex-col justify-center p-10 z-10">
-      <h1 className="text-xl text-black font-semibold">{current.title}</h1>
-      <p className="text-gray-500 text-sm">{current.subtitle}</p>
+    <header className="sticky top-0 h-16 bg-white shadow flex items-center justify-between py-10 px-10 z-10">
+      <div>
+        <h1 className="text-xl text-black font-semibold">{current.title}</h1>
+        <p className="text-gray-500 text-sm">{current.subtitle}</p>
+      </div>
+      {path === "/Fleetmap" && (
+        <button
+          onClick={() => router.push("/Announcement")}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
+        >
+          <Campaign className="w-5 h-5" />
+          Announcement  
+        </button>
+      )}
     </header>
   );
 }
