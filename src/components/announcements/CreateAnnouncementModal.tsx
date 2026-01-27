@@ -1,18 +1,12 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
+import { Dialog, Transition, Listbox } from "@headlessui/react";
 import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Select,
-  MenuItem,
-  FormControl,
-  Button,
-  Typography,
-  SelectChangeEvent
-} from "@mui/material";
-import { Campaign, Close } from "@mui/icons-material";
+  CheckIcon,
+  ChevronUpDownIcon,
+  XMarkIcon
+} from "@heroicons/react/24/outline";
+
+/* ================= TYPES ================= */
 
 interface Announcement {
   id: string;
@@ -28,8 +22,80 @@ interface Announcement {
 interface CreateAnnouncementModalProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (announcement: Omit<Announcement, 'id' | 'postedDate' | 'author'>) => void;
+  onSubmit: (
+    announcement: Omit<Announcement, "id" | "postedDate" | "author">
+  ) => void;
 }
+
+/* ================= REUSABLE SELECT ================= */
+
+interface SelectOption {
+  label: string;
+  value: string;
+}
+
+interface SelectProps {
+  label: string;
+  value: string;
+  placeholder: string;
+  options: SelectOption[];
+  onChange: (value: string) => void;
+}
+
+function Select({
+  label,
+  value,
+  placeholder,
+  options,
+  onChange
+}: SelectProps) {
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        {label}
+      </label>
+
+      <Listbox value={value} onChange={onChange}>
+        <div className="relative">
+          <Listbox.Button
+            className={`relative w-full rounded-md border px-3 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+              value ? "text-gray-900" : "text-gray-400"
+            }`}
+          >
+            {value
+              ? options.find((o) => o.value === value)?.label
+              : placeholder}
+
+            <ChevronUpDownIcon className="pointer-events-none absolute right-2 top-2.5 h-5 w-5 text-gray-400" />
+          </Listbox.Button>
+
+          <Listbox.Options className="absolute z-20 mt-1 w-full rounded-md bg-white shadow-lg p-1">
+            {options.map((option) => (
+              <Listbox.Option
+                key={option.value}
+                value={option.value}
+                className={({ active }) =>
+                  `cursor-pointer select-none px-3 py-2 rounded-md ${
+                    active ? "bg-blue-600 text-white" : "text-gray-900"
+                  }`
+                }
+              >
+                {({ selected }) => (
+                  <div className="flex items-center justify-between">
+                    {option.label}
+                    {selected && <CheckIcon className="h-4 w-4" />}
+                  </div>
+                )}
+              </Listbox.Option>
+            ))}
+          </Listbox.Options>
+        </div>
+      </Listbox>
+    </div>
+  );
+}
+
+/* ================= MODAL ================= */
 
 export default function CreateAnnouncementModal({
   open,
@@ -39,181 +105,236 @@ export default function CreateAnnouncementModal({
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    priority: "Medium" as "High" | "Medium" | "Low",
+    priority: "",
     category: "",
-    audience: "both" as "drivers" | "passengers" | "both"
+    audience: "",
+    sendOption: "",
+    schedule: ""
   });
 
-  const handleClose = () => {
-    onClose();
+  const resetForm = () =>
     setFormData({
       title: "",
       description: "",
-      priority: "Medium",
+      priority: "",
       category: "",
-      audience: "both"
+      audience: "",
+      sendOption: "",
+      schedule: ""
     });
-  };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSelectChange = (name: string) => (event: SelectChangeEvent) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: event.target.value
-    }));
+  const handleClose = () => {
+    resetForm();
+    onClose();
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!formData.title.trim() || !formData.description.trim()) {
-      return; // Basic validation
-    }
-
-    onSubmit(formData);
+    if (!formData.title || !formData.description) return;
+    onSubmit(formData as any);
     handleClose();
   };
 
   return (
-    <Dialog 
-      open={open} 
-      onClose={handleClose} 
-      maxWidth="md" 
-      fullWidth
-      sx={{
-        '& .MuiDialog-paper': {
-          fontFamily: 'Poppins, sans-serif',
-        },
-      }}
-    >
-      <DialogTitle className="flex items-center justify-between bg-[#121212] text-white">
-        <div className="flex items-center gap-3">
-          <Campaign className="w-6 h-6 text-yellow-400" />
-          <span className="text-xl font-semibold">Create New Announcement</span>
-        </div>
-        <Button onClick={handleClose} size="small" className="text-white hover:bg-white/10">
-          <Close className="text-white" />
-        </Button>
-      </DialogTitle>
+    <Transition appear show={open} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={handleClose}>
+        {/* Overlay */}
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-200"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-150"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black/40" />
+        </Transition.Child>
 
-      <form onSubmit={handleSubmit}>
-        <DialogContent className="space-y-4">
- <div className="grid grid-cols-3 gap-4">
-  {/* Type */}
-  <div>
-    <Typography variant="body2" className="mb-1 font-medium text-gray-700">
-      Type
-    </Typography>
-  <FormControl fullWidth>
-  <Select
-    value={formData.priority}
-    onChange={handleSelectChange("priority")}
-    variant="outlined"
-    sx={{
-      borderRadius: "0.375rem",
-      "& .MuiOutlinedInput-notchedOutline": {
-        borderRadius: "0.375rem",
-      },
-    }}
-  >
-    <MenuItem value="Alert">Alert</MenuItem>
-    <MenuItem value="Announcement">Announcement</MenuItem>
-    <MenuItem value="Low">Promotion</MenuItem>
-  </Select>
-</FormControl>
+        {/* Modal */}
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-200"
+            enterFrom="opacity-0 scale-95"
+            enterTo="opacity-100 scale-100"
+            leave="ease-in duration-150"
+            leaveFrom="opacity-100 scale-100"
+            leaveTo="opacity-0 scale-95"
+          >
+            <Dialog.Panel className="w-full max-w-4xl rounded-lg bg-white shadow-xl">
+              {/* Header */}
+              <div className="flex items-center justify-between bg-[#121212] px-6 py-4 text-white rounded-t-lg">
+                <Dialog.Title className="text-lg font-semibold">
+                  Create New Announcement
+                </Dialog.Title>
+                <button onClick={handleClose}>
+                  <XMarkIcon className="h-6 w-6" />
+                </button>
+              </div>
 
-  </div>
+              {/* Form */}
+              <form onSubmit={handleSubmit} className="p-6 space-y-6">
+                {/* Top selects */}
+                <div className="grid grid-cols-3 gap-4">
+                  <Select
+                    label="Type"
+                    placeholder="Select Type"
+                    value={formData.category}
+                    onChange={(v) =>
+                      setFormData({ ...formData, category: v })
+                    }
+                    options={[
+                      { label: "Alert", value: "Alert" },
+                      { label: "Announcement", value: "Announcement" },
+                      { label: "Promotion", value: "Promotion" }
+                    ]}
+                  />
 
-  {/* Target Audience */}
-  <div>
-    <Typography variant="body2" className="mb-1 font-medium text-gray-700">
-      Target Audience
-    </Typography>
-    <FormControl fullWidth>
-      <Select
-        value={formData.audience}
-        onChange={handleSelectChange("audience")}
-        variant="outlined"
-      >
-        <MenuItem value="drivers">Drivers</MenuItem>
-        <MenuItem value="passengers">Passengers</MenuItem>
-        <MenuItem value="both">All Users</MenuItem>
-      </Select>
-    </FormControl>
-  </div>
+                  <Select
+                    label="Target Audience"
+                    placeholder="Select Audience"
+                    value={formData.audience}
+                    onChange={(v) =>
+                      setFormData({ ...formData, audience: v })
+                    }
+                    options={[
+                      { label: "Drivers", value: "drivers" },
+                      { label: "Passengers", value: "passengers" },
+                      { label: "All Users", value: "both" }
+                    ]}
+                  />
 
-  {/* Priority Level */}
-  <div>
-    <Typography variant="body2" className="mb-1 font-medium text-gray-700">
-      Priority Level
-    </Typography>
-    <FormControl fullWidth>
-      <Select
-        value={formData.priority}
-        onChange={handleSelectChange("priority")}
-        variant="outlined"
-      >
-        <MenuItem value="High">High</MenuItem>
-        <MenuItem value="Medium">Medium</MenuItem>
-        <MenuItem value="Low">Low</MenuItem>
-      </Select>
-    </FormControl>
-  </div>
+                  <Select
+                    label="Priority Level"
+                    placeholder="Select Priority"
+                    value={formData.priority}
+                    onChange={(v) =>
+                      setFormData({ ...formData, priority: v })
+                    }
+                    options={[
+                      { label: "High", value: "High" },
+                      { label: "Medium", value: "Medium" },
+                      { label: "Low", value: "Low" }
+                    ]}
+                  />
+                </div>
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Title *
+  </label>
+
+  <input
+    type="text"
+    value={formData.title}
+    onChange={(e) =>
+      setFormData({ ...formData, title: e.target.value })
+    }
+    className="
+      w-full
+      rounded-md
+      border
+      border-gray-300
+      px-3
+      py-2
+      text-gray-900
+      placeholder-gray-400
+      focus:outline-none
+      focus:ring-2
+      focus:ring-blue-500
+      focus:border-blue-500
+    "
+    required
+  />
 </div>
 
 
-          <TextField
-            fullWidth
-            label="Title"
-            name="title"
-            value={formData.title}
-            onChange={handleInputChange}
-            required
-            variant="outlined"
-            placeholder="Enter announcement title"
-          />
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Description *
+  </label>
 
-          <TextField
-            fullWidth
-            label="Description"
-            name="description"
-            value={formData.description}
-            onChange={handleInputChange}
-            required
-            multiline
-            rows={4}
-            variant="outlined"
-            placeholder="Enter detailed description"
-          />
+  <textarea
+    rows={4}
+    value={formData.description}
+    onChange={(e) =>
+      setFormData({
+        ...formData,
+        description: e.target.value
+      })
+    }
+    className="
+      w-full
+      rounded-md
+      border
+      border-gray-300
+      px-3
+      py-2
+      text-gray-900
+      placeholder-gray-400
+      resize-none
+      focus:outline-none
+      focus:ring-2
+      focus:ring-blue-500
+      focus:border-blue-500
+    "
+    required
+  />
+</div>
 
-          
-          <TextField
-            fullWidth
-            label="Category"
-            name="category"
-            value={formData.category}
-            onChange={handleInputChange}
-            placeholder="e.g., System Alert, Policy Update, General"
-            variant="outlined"
-          />
-        </DialogContent>
 
-        <DialogActions className="p-6">
-          <Button onClick={handleClose} variant="outlined">
-            Cancel
-          </Button>
-          <Button type="submit" variant="contained" color="primary">
-            Create Announcement
-          </Button>
-        </DialogActions>
-      </form>
-    </Dialog>
+                {/* Bottom selects */}
+                <div className="grid grid-cols-2 gap-4">
+                  <Select
+                    label="Send Options"
+                    placeholder="Select Send Option"
+                    value={formData.sendOption}
+                    onChange={(v) =>
+                      setFormData({ ...formData, sendOption: v })
+                    }
+                    options={[
+                      { label: "Email", value: "email" },
+                      { label: "In App", value: "inApp" },
+                      { label: "SMS", value: "sms" }
+                    ]}
+                  />
+
+                  <Select
+                    label="Schedule"
+                    placeholder="Select Schedule"
+                    value={formData.schedule}
+                    onChange={(v) =>
+                      setFormData({ ...formData, schedule: v })
+                    }
+                    options={[
+                      { label: "Send Immediately", value: "now" },
+                      { label: "Set Schedule", value: "later" }
+                    ]}
+                  />
+                </div>
+
+                {/* Actions */}
+                <div className="flex justify-end gap-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={handleClose}
+                    className="rounded-md border px-4 py-2"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                  >
+                    Create Announcement
+                  </button>
+                </div>
+              </form>
+            </Dialog.Panel>
+          </Transition.Child>
+        </div>
+      </Dialog>
+    </Transition>
   );
 }
