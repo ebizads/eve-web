@@ -19,7 +19,7 @@ const sampleAnnouncements: Announcement[] = [
     category: "System Alert",
     title: "Emergency System Maintenance",
     description: "Due to an unexpected system failure, all fleet operations will be temporarily suspended for 2 hours starting at 3:00 PM today. Drivers will be notified via SMS.",
-    postedDate: "Jan 22, 2026",
+    postedDate: "Jan 22, 2026 at 2:30 PM",
     author: "System Admin",
     audience: "drivers"
   },
@@ -30,7 +30,7 @@ const sampleAnnouncements: Announcement[] = [
     category: "Service Update",
     title: "New Luxury Vehicle Class Available",
     description: "We're excited to introduce our premium luxury vehicle service! Passengers can now request high-end vehicles with premium amenities including leather seating, WiFi, and refreshments.",
-    postedDate: "Jan 21, 2026",
+    postedDate: "Jan 21, 2026 at 9:15 AM",
     author: "Customer Service",
     audience: "passengers"
   },
@@ -40,9 +40,19 @@ const sampleAnnouncements: Announcement[] = [
     category: "Weather Alert",
     title: "Severe Weather Conditions Expected",
     description: "Heavy snowfall expected tomorrow. All rides may experience delays. Passengers are advised to allow extra travel time. Drivers should follow winter driving protocols.",
-    postedDate: "Jan 20, 2026",
+    postedDate: "Jan 20, 2026 at 4:45 PM",
     author: "Operations Center",
     audience: "both"
+  },
+  {
+    id: "4",
+    priority: "Medium",
+    category: "Promotion",
+    title: "Weekend Special Discount",
+    description: "Enjoy 20% off on all rides this weekend! Book now through our app and get exclusive weekend pricing. Limited time offer for all passengers.",
+    postedDate: "Feb 1, 2026 at 10:00 AM",
+    author: "Marketing Team",
+    audience: "passengers"
   },
 
 ];
@@ -106,6 +116,24 @@ const getAudienceInfo = (audience: string) => {
   }
 };
 
+const getStatusInfo = (postedDate: string) => {
+  // Simple logic: if date is in the past, it's "Sent", otherwise "Scheduled"
+  const announcementDate = new Date(postedDate);
+  const currentDate = new Date();
+  
+  if (announcementDate < currentDate) {
+    return {
+      status: "Sent",
+      color: "text-green-600"
+    };
+  } else {
+    return {
+      status: "Scheduled",
+      color: "text-blue-600"
+    };
+  }
+};
+
 export default function AnnouncementList() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
@@ -152,6 +180,7 @@ export default function AnnouncementList() {
         {currentAnnouncements.map((announcement) => {
           const styles = getPriorityStyles(announcement.priority);
           const audienceInfo = getAudienceInfo(announcement.audience);
+          const statusInfo = getStatusInfo(announcement.postedDate);
 
           return (
             <div key={announcement.id} className={`border ${styles.borderColor} p-4 ${styles.bgColor} rounded-lg`}>
@@ -170,8 +199,8 @@ export default function AnnouncementList() {
                   </div>
                   <p className="text-gray-700 mb-3">{announcement.description}</p>
                   <div className="flex items-center gap-4 text-sm text-gray-500">
-                    <span>Posted: {announcement.postedDate}</span>
-                    <span>By: {announcement.author}</span>
+                    <span>Status: <span className={statusInfo.color}>{statusInfo.status}</span></span>
+                    <span>{statusInfo.status === "Sent" ? "Sent on:" : "Scheduled for:"} {announcement.postedDate}</span>
                   </div>
                 </div>
                 <div className="flex gap-2">

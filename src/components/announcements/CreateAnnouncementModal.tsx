@@ -3,7 +3,8 @@ import { Dialog, Transition, Listbox } from "@headlessui/react";
 import {
   CheckIcon,
   ChevronUpDownIcon,
-  XMarkIcon
+  XMarkIcon,
+  PlusIcon
 } from "@heroicons/react/24/outline";
 
 /* ================= TYPES ================= */
@@ -17,6 +18,9 @@ interface Announcement {
   postedDate: string;
   author: string;
   audience: "drivers" | "passengers" | "both";
+  sendOption: string;
+  schedule: string;
+  scheduledAt?: string;
 }
 
 interface CreateAnnouncementModalProps {
@@ -34,21 +38,19 @@ interface SelectOption {
   value: string;
 }
 
-interface SelectProps {
-  label: string;
-  value: string;
-  placeholder: string;
-  options: SelectOption[];
-  onChange: (value: string) => void;
-}
-
 function Select({
   label,
   value,
   placeholder,
   options,
   onChange
-}: SelectProps) {
+}: {
+  label: string;
+  value: string;
+  placeholder: string;
+  options: SelectOption[];
+  onChange: (value: string) => void;
+}) {
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -58,7 +60,7 @@ function Select({
       <Listbox value={value} onChange={onChange}>
         <div className="relative">
           <Listbox.Button
-            className={`relative w-full rounded-md border px-3 py-2 text-left focus:outline-none focus:ring-1 focus:ring-blue-500 ${
+            className={`relative w-full rounded-md border border-gray-300 px-3 py-2 text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
               value ? "text-gray-900" : "text-gray-400"
             }`}
           >
@@ -109,7 +111,8 @@ export default function CreateAnnouncementModal({
     category: "",
     audience: "",
     sendOption: "",
-    schedule: ""
+    schedule: "",
+    scheduledAt: ""
   });
 
   const resetForm = () =>
@@ -120,7 +123,8 @@ export default function CreateAnnouncementModal({
       category: "",
       audience: "",
       sendOption: "",
-      schedule: ""
+      schedule: "",
+      scheduledAt: ""
     });
 
   const handleClose = () => {
@@ -130,7 +134,15 @@ export default function CreateAnnouncementModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.description) return;
+
+    if (
+      !formData.title ||
+      !formData.description ||
+      (formData.schedule === "later" && !formData.scheduledAt)
+    ) {
+      return;
+    }
+
     onSubmit(formData as any);
     handleClose();
   };
@@ -165,13 +177,14 @@ export default function CreateAnnouncementModal({
             <Dialog.Panel className="w-full max-w-4xl rounded-lg bg-white shadow-xl">
               {/* Header */}
               <div className="flex items-center justify-between bg-[#121212] px-6 py-4 text-white rounded-t-lg">
-                <Dialog.Title className="text-lg font-semibold">
+                <Dialog.Title className="text-lg font-semibold flex items-center gap-3">
+                  <PlusIcon className="h-6 w-6 text-yellow-400" />
                   Create New Announcement
                 </Dialog.Title>
                 <button onClick={handleClose}>
                   <XMarkIcon className="h-6 w-6" />
                 </button>
-              </div>
+              </div>  
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="p-6 space-y-6">
@@ -220,69 +233,40 @@ export default function CreateAnnouncementModal({
                   />
                 </div>
 
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Title *
-  </label>
+                {/* Title */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Title *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.title}
+                    onChange={(e) =>
+                      setFormData({ ...formData, title: e.target.value })
+                    }
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
 
-  <input
-    type="text"
-    value={formData.title}
-    onChange={(e) =>
-      setFormData({ ...formData, title: e.target.value })
-    }
-    className="
-      w-full
-      rounded-md
-      border
-      border-gray-300
-      px-3
-      py-2
-      text-gray-900
-      placeholder-gray-400
-      focus:outline-none
-      focus:ring-2
-      focus:ring-blue-500
-      focus:border-blue-500
-    "
-    required
-  />
-</div>
-
-
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Description *
-  </label>
-
-  <textarea
-    rows={4}
-    value={formData.description}
-    onChange={(e) =>
-      setFormData({
-        ...formData,
-        description: e.target.value
-      })
-    }
-    className="
-      w-full
-      rounded-md
-      border
-      border-gray-300
-      px-3
-      py-2
-      text-gray-900
-      placeholder-gray-400
-      resize-none
-      focus:outline-none
-      focus:ring-2
-      focus:ring-blue-500
-      focus:border-blue-500
-    "
-    required
-  />
-</div>
-
+                {/* Description */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Description *
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={formData.description}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        description: e.target.value
+                      })
+                    }
+                    className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required
+                  />
+                </div>
 
                 {/* Bottom selects */}
                 <div className="grid grid-cols-2 gap-4">
@@ -305,7 +289,11 @@ export default function CreateAnnouncementModal({
                     placeholder="Select Schedule"
                     value={formData.schedule}
                     onChange={(v) =>
-                      setFormData({ ...formData, schedule: v })
+                      setFormData({
+                        ...formData,
+                        schedule: v,
+                        scheduledAt: v === "later" ? formData.scheduledAt : ""
+                      })
                     }
                     options={[
                       { label: "Send Immediately", value: "now" },
@@ -314,12 +302,33 @@ export default function CreateAnnouncementModal({
                   />
                 </div>
 
+                {/* Conditional Date Time */}
+                {formData.schedule === "later" && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Schedule Date & Time *
+                    </label>
+                    <input
+                      type="datetime-local"
+                      value={formData.scheduledAt}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          scheduledAt: e.target.value
+                        })
+                      }
+                      className="w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      required
+                    />
+                  </div>
+                )}
+
                 {/* Actions */}
                 <div className="flex justify-end gap-3 pt-4">
                   <button
                     type="button"
                     onClick={handleClose}
-                    className="rounded-md border px-4 py-2"
+                    className="rounded-md text-gray-600 border px-4 py-2"
                   >
                     Cancel
                   </button>
