@@ -54,7 +54,11 @@ export default function Sidebar() {
         { text: "Ledger", path: "/finance/ledger" },
       ],
     },
-    { text: "Drivers", icon: <PeopleAltRounded />, path: "/drivers" },
+    {
+      text: "Drivers",
+      icon: <PeopleAltRounded />,
+      path: "/driver-management",
+    },
     {
       text: "Vehicles",
       icon: <DirectionsCarFilledRounded />,
@@ -85,7 +89,7 @@ export default function Sidebar() {
   const handleNavigation = (
     path?: string,
     hasSubmenu?: boolean,
-    text?: string
+    text?: string,
   ) => {
     if (hasSubmenu) {
       toggleMenu(text!);
