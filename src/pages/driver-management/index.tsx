@@ -1,136 +1,14 @@
 import { TextField, MenuItem, Button, Typography } from "@mui/material";
 import { PlusIcon } from "@heroicons/react/24/outline";
 import Table from "../../components/Table";
-
+import { useState } from "react";
+import {
+  driverManageColumns as columns,
+  driverManageRows as rows,
+} from "../../lib/table";
+import AddDriverModal from "../../components/driver-management/AddMemberModal";
 export default function DriverManagement() {
-  const columns = [
-    { id: "driverName", label: "Driver Name" },
-    { id: "licenseNo", label: "License No." },
-    { id: "contact", label: "Contact No." },
-    { id: "dateofBirth", label: "Date of Birth" },
-    { id: "status", label: "Status" },
-    {
-      id: "actions",
-      label: "Actions",
-      width: "60px",
-      align: "center" as const,
-    },
-  ];
-
-  const rows = [
-    {
-      image: "https://i.pravatar.cc/150?img=1",
-      driverName: "John Doe",
-      licenseNo: "D1234567",
-      contact: "123-456-7890",
-      dateofBirth: "1990-01-01",
-      status: "Active",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=2",
-      driverName: "Jane Smith",
-      licenseNo: "D7654321",
-      contact: "098-765-4321",
-      dateofBirth: "1985-05-15",
-      status: "Inactive",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=3",
-      driverName: "Michael Johnson",
-      licenseNo: "D1111111",
-      contact: "555-123-4567",
-      dateofBirth: "1988-03-10",
-      status: "Active",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=4",
-      driverName: "Sarah Williams",
-      licenseNo: "D2222222",
-      contact: "555-234-5678",
-      dateofBirth: "1992-07-22",
-      status: "Active",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=5",
-      driverName: "Robert Brown",
-      licenseNo: "D3333333",
-      contact: "555-345-6789",
-      dateofBirth: "1987-11-08",
-      status: "Inactive",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=6",
-      driverName: "Emily Davis",
-      licenseNo: "D4444444",
-      contact: "555-456-7890",
-      dateofBirth: "1991-02-14",
-      status: "Active",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=7",
-      driverName: "David Miller",
-      licenseNo: "D5555555",
-      contact: "555-567-8901",
-      dateofBirth: "1989-09-25",
-      status: "Active",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=8",
-      driverName: "Jessica Wilson",
-      licenseNo: "D6666666",
-      contact: "555-678-9012",
-      dateofBirth: "1994-12-03",
-      status: "Active",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=9",
-      driverName: "Christopher Moore",
-      licenseNo: "D7777777",
-      contact: "555-789-0123",
-      dateofBirth: "1986-06-18",
-      status: "Inactive",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=10",
-      driverName: "Amanda Taylor",
-      licenseNo: "D8888888",
-      contact: "555-890-1234",
-      dateofBirth: "1993-04-07",
-      status: "Active",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=11",
-      driverName: "James Anderson",
-      licenseNo: "D9999999",
-      contact: "555-901-2345",
-      dateofBirth: "1990-08-30",
-      status: "Active",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=12",
-      driverName: "Lauren Thomas",
-      licenseNo: "D1010101",
-      contact: "555-012-3456",
-      dateofBirth: "1995-01-12",
-      status: "Active",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=13",
-      driverName: "Daniel Jackson",
-      licenseNo: "D1111112",
-      contact: "555-123-4567",
-      dateofBirth: "1988-10-20",
-      status: "Inactive",
-    },
-    {
-      image: "https://i.pravatar.cc/150?img=14",
-      driverName: "Sophia White",
-      licenseNo: "D1212121",
-      contact: "555-234-5678",
-      dateofBirth: "1992-05-11",
-      status: "Active",
-    },
-  ];
+  const [open, setOpen] = useState(false);
 
   return (
     <div className="flex w-full h-full p-6 text-black">
@@ -188,6 +66,7 @@ export default function DriverManagement() {
                 fontWeight: "bold",
               }}
               startIcon={<PlusIcon className="w-5 text-black font-bold" />}
+              onClick={() => setOpen(true)}
             >
               <Typography sx={{ fontWeight: "bold" }}>
                 Register Driver
@@ -205,6 +84,7 @@ export default function DriverManagement() {
           ></Table>
         </div>
       </div>
+      <AddDriverModal open={open} setOpen={setOpen} />
     </div>
   );
 }
