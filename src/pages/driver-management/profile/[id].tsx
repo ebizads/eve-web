@@ -90,14 +90,14 @@ export default function DriverProfile() {
         <div className="flex flex-col w-full lg:w-2/3 h-full gap-4">
           {/* Stats Cards Row */}
           <div className="flex flex-col sm:flex-row gap-4 h-1/5">
-            <div className="flex flex-col flex-1 p-5 px-7 border-[1px] border-[#BFBFBF] rounded-lg">
+            <div className="flex flex-col justify-center w-full p-5 px-7 border-[1px] border-[#BFBFBF] rounded-lg">
               <p className="text-sm font-medium mb-2">Total Trips</p>
               <div className="flex items-center justify-between">
                 <p className="text-3xl font-bold">23</p>
                 <div className="text-2xl"></div>
               </div>
             </div>
-            <div className="flex flex-col flex-1 p-5 px-7 border-[1px] border-[#BFBFBF] rounded-lg">
+            <div className="flex flex-col justify-center w-full p-5 px-7 border-[1px] border-[#BFBFBF] rounded-lg">
               <p className="text-sm font-medium mb-2">Avg. Rating</p>
               <div className="flex items-center justify-between">
                 <p className="text-3xl font-bold">4.6</p>
