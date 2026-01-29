@@ -1,7 +1,13 @@
+"use client";
+import React, { useState } from "react";
 import Groups2OutlinedIcon from "@mui/icons-material/Groups2Outlined";
 import PlaylistAddCheckOutlinedIcon from "@mui/icons-material/PlaylistAddCheckOutlined";
 import AnalyticsOutlinedIcon from "@mui/icons-material/AnalyticsOutlined";
 import TrendingUpOutlinedIcon from "@mui/icons-material/TrendingUpOutlined";
+import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
+import WarningAmberOutlinedIcon from "@mui/icons-material/WarningAmberOutlined";
+import { Tabs, Tab, Box } from "@mui/material";
+import AnnouncementList from "../../components/announcements/AnnouncementList";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -105,6 +111,12 @@ const perfectlyAlignedShadowPlugin = {
 };
 
 export default function Dashboard() {
+  const [innerTab, setInnerTab] = useState<number>(0);
+
+  const handleInnerTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setInnerTab(newValue);
+  };
+
   const cardList = [
     {
       key: 1,
@@ -373,7 +385,7 @@ export default function Dashboard() {
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top" as const,
+        position: "bottom" as const,
         labels: {
           boxWidth: 12,
           font: {
@@ -464,7 +476,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="flex flex-col h-full w-full p-6 font-poppins bg-gray-50 min-h-screen">
+    <div className="flex flex-col w-full p-6 font-poppins bg-gray-50 h-screen overflow-y-auto">
       {/* Cards */}
       <div className="grid grid-cols-3 gap-x-5 xl:gap-x-7 gap-y-5 xl:gap-y-0 w-full mt-3">
         {cardList.map((card) => (
@@ -525,9 +537,60 @@ export default function Dashboard() {
             />
           </div>
         </div>
+      </div>
+
+      {/* Bottom Section: Announcements/Alerts on left, Bar Chart on right */}
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Announcements and Alert Logs Container */}
+<div className="lg:col-span-1 bg-white rounded-2xl px-3 py-3 shadow-lg font-poppins">
+  {/* Tabs */}
+  <div className="flex border-b bg-[#DAE0E7] px-1 py-1 rounded-md ">
+    <button
+      onClick={() => setInnerTab(0)}
+      className={`flex-1 py-2 text-sm font-medium rounded-sm transition flex items-center justify-center gap-2
+        ${
+          innerTab === 0
+            ? "text-black bg-white"
+            : "text-gray-500"
+        }`}
+    >
+      <NotificationsOutlinedIcon sx={{ fontSize: 18 }} />
+      Announcements
+    </button>
+
+    <button
+      onClick={() => setInnerTab(1)}
+      className={`flex-1 py-2 text-sm font-medium rounded-sm transition flex items-center justify-center gap-2
+        ${
+          innerTab === 1
+            ? "text-black bg-white"
+            : "text-gray-500"
+        }`}
+    >
+      <WarningAmberOutlinedIcon sx={{ fontSize: 18 }} />
+      Recent Alert Logs
+    </button>
+  </div>
+
+  {/* Content */}
+    <div className="p-4 h-80 overflow-y-auto">
+              {innerTab === 0 && <AnnouncementList showActions={false} showMeta={false} />}
+
+      {innerTab === 1 && (
+        <div className="text-center py-8">
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Recent Alert Logs
+          </h3>
+          <p className="text-gray-500">
+            Alert logs functionality coming soon...
+          </p>
+        </div>
+      )}
+    </div>
+</div>
 
         {/* Bar Chart - Booking Performance with Perfectly Aligned Shadows */}
-        <div className="lg:col-span-3 bg-white p-4 rounded-2xl shadow-lg">
+        <div className="lg:col-span-2 bg-white p-4 rounded-2xl shadow-lg">
           <div className="h-64">
             <Bar
               data={bookingData}

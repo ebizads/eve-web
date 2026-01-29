@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from "react";
 import { DirectionsCar, People, Groups, Edit, Delete, ChevronLeft, ChevronRight } from "@mui/icons-material";
 
@@ -106,7 +108,7 @@ const getAudienceInfo = (audience: string) => {
   }
 };
 
-export default function AnnouncementList() {
+export default function AnnouncementList({ showActions = true, showMeta = true }: { showActions?: boolean; showMeta?: boolean }) {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 3;
 
@@ -150,6 +152,15 @@ export default function AnnouncementList() {
     <>
       <div className="space-y-4">
         {currentAnnouncements.map((announcement) => {
+          if (!showMeta) {
+            return (
+              <div key={announcement.id} className="p-4 rounded-lg border border-gray-200 bg-white">
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">{announcement.title}</h3>
+                <p className="text-gray-700 text-sm">{announcement.description}</p>
+              </div>
+            );
+          }
+
           const styles = getPriorityStyles(announcement.priority);
           const audienceInfo = getAudienceInfo(announcement.audience);
 
@@ -158,7 +169,7 @@ export default function AnnouncementList() {
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-2">{announcement.title}</h3>
+                    <div className="text-lg font-semibold text-gray-900 mb-2">{announcement.title}</div>
                     <span className={`px-2 py-1 ${styles.badgeColor} text-sm font-semibold rounded-md`}>
                       {announcement.priority}
                     </span>
@@ -174,22 +185,24 @@ export default function AnnouncementList() {
                     <span>By: {announcement.author}</span>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={() => handleEdit(announcement.id)}
-                    className="text-blue-600 hover:text-blue-800 border px-2 py-1 rounded-md text-sm font-medium flex items-center gap-1"
-                  >
-                    <Edit sx={{ fontSize: 16 }} />
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(announcement.id)}
-                    className="text-red-600 hover:text-red-800 border px-2 py-1 rounded-md text-sm font-medium flex items-center gap-1"
-                  >
-                    <Delete sx={{ fontSize: 16 }} />
-                    Delete
-                  </button>
-                </div>
+                {showActions && (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleEdit(announcement.id)}
+                      className="text-blue-600 hover:text-blue-800 border px-2 py-1 rounded-md text-sm font-medium flex items-center gap-1"
+                    >
+                      <Edit sx={{ fontSize: 16 }} />
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(announcement.id)}
+                      className="text-red-600 hover:text-red-800 border px-2 py-1 rounded-md text-sm font-medium flex items-center gap-1"
+                    >
+                      <Delete sx={{ fontSize: 16 }} />
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           );
