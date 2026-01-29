@@ -7,7 +7,13 @@ import {
   driverManageRows as rows,
 } from "../../lib/table";
 import AddDriverModal from "../../components/driver-management/AddMemberModal";
+import { useRouter } from "next/router";
+
 export default function DriverManagement() {
+  const router = useRouter();
+  const handleRowClick = (id: string) => {
+    router.push(`/driver-management/profile/${id}`);
+  };
   const [open, setOpen] = useState(false);
 
   return (
@@ -77,11 +83,12 @@ export default function DriverManagement() {
         {/* Table */}
         <div className="flex w-full h-full max-h-full mt-5 ">
           <Table
+            onClick={handleRowClick}
             columns={columns}
             rows={rows}
             height="auto"
             maxHeight="620px"
-          ></Table>
+          />
         </div>
       </div>
       <AddDriverModal open={open} setOpen={setOpen} />

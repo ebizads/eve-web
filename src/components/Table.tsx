@@ -21,6 +21,7 @@ interface Column {
 
 interface TableProps {
   columns: Column[];
+  onClick?: (id: string) => void;
   rows: Record<string, any>[];
   height?: string | number;
   maxHeight?: string | number;
@@ -29,6 +30,7 @@ interface TableProps {
 export default function Table({
   columns,
   rows,
+  onClick,
   height = "auto",
   maxHeight = "600px",
 }: TableProps) {
@@ -71,11 +73,12 @@ export default function Table({
             </TableRow>
           </TableHead>
           <TableBody>
-            {paginatedRows.map((row, rowIndex) => (
+            {paginatedRows.map((row) => (
               <TableRow
-                key={rowIndex}
+                key={row.id}
                 hover
-                sx={{ backgroundColor: "#F7F6FE" }}
+                onClick={onClick ? () => onClick(row.id) : undefined}
+                sx={{ backgroundColor: "#F7F6FE", cursor: "pointer" }}
               >
                 {columns.map((column) => {
                   let cellContent = row[column.id];
@@ -113,7 +116,7 @@ export default function Table({
 
                   return (
                     <TableCell
-                      key={`${rowIndex}-${column.id}`}
+                      key={`${row.id}-${column.id}`}
                       align={column.align || "left"}
                       sx={{
                         width: column.width,
