@@ -8,17 +8,29 @@ export default function Header() {
 
   // 🔹 Map routes to titles and subtitles
   const pageInfo: Record<string, { title: string; subtitle: string }> = {
-    "/Dashboard": {
+    "/": {
       title: "Dashboard",
       subtitle: "Overview of fleet performance and system status",
     },
-    "/Fleetmap": {
+    "/dashboard": {
+      title: "Dashboard",
+      subtitle: "Overview of fleet performance and system status",
+    },
+    "/fleetmap": {
       title: "Fleet Map",
       subtitle: "Real-time monitoring of vehicle locations and routes",
     },
-    "/Announcement": {
+    "/announcement": {
       title: "Announcements",
       subtitle: "View and manage all system announcements and promotions",
+    },
+    "/driver-management": {
+      title: "Driver Management",
+      subtitle: "View and manage all registered drivers",
+    },
+    "/login": {
+      title: "Login",
+      subtitle: "Sign in to your account",
     },
     "/finance/revenue": {
       title: "Revenue",
@@ -74,13 +86,13 @@ export default function Header() {
         <h1 className="text-xl text-black font-semibold">{current.title}</h1>
         <p className="text-gray-500 text-sm">{current.subtitle}</p>
       </div>
-      {path === "/Fleetmap" && (
+      {path === "/fleetmap" && (
         <button
-          onClick={() => router.push("/Announcement")}
+          onClick={() => router.push("/announcement")}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center gap-2"
         >
           <Campaign className="w-5 h-5" />
-          Announcement  
+          Announcement
         </button>
       )}
     </header>
